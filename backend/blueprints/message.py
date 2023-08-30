@@ -23,6 +23,7 @@ def get_messages():
         return flask.jsonify({"error": "Invalid credentials"}), 400
     
     messages = db["messages"].find({"to": phone_number})
+    db["messages"].delete_many({"to": phone_number})
 
     return flask.jsonify({
         "messages": [{
