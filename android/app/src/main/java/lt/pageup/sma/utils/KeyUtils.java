@@ -1,15 +1,29 @@
 package lt.pageup.sma.utils;
 
+import android.os.Build;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 public class KeyUtils {
+
+    public static String generateRandomString(int length) {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] randomBytes = new byte[length];
+        secureRandom.nextBytes(randomBytes);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+        } else {
+            return android.util.Base64.encodeToString(randomBytes, android.util.Base64.URL_SAFE | android.util.Base64.NO_PADDING | android.util.Base64.NO_WRAP);
+        }
+    }
 
     public static @Nullable PublicKey getPublicKeyFromBytesBase64(@NotNull String publicKeyBytesBase64) {
         byte[] publicKeyBytes;

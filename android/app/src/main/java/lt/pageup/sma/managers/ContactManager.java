@@ -4,8 +4,8 @@ import android.content.Context;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Array;
 import java.util.List;
+
 
 import lt.pageup.sma.database.ContactDataSource;
 import lt.pageup.sma.objects.Contact;
