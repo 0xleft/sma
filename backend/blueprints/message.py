@@ -39,7 +39,7 @@ def send_message():
     if data is None:
         return flask.jsonify({"error": "Invalid request"}), 400
     
-    if "secretString" not in data or "phoneNumber" not in data or "message" not in data:
+    if "secretString" not in data or "phoneNumber" not in data or "message" not in data or "to" not in data:
         return flask.jsonify({"error": "Invalid request"}), 400
     
     secret_string = str(data["secretString"])
