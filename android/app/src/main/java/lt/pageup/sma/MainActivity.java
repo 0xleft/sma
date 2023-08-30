@@ -3,6 +3,7 @@ package lt.pageup.sma;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             EditText messageContent = findViewById(R.id.message_content);
 
             String message = messageContent.getText().toString();
-            messageManager.sendMessage(message, phoneNumber);
+            messageManager.sendMessage(phoneNumber, message);
 
             messageContent.setText("");
             messageContent.setHint("Message sent");

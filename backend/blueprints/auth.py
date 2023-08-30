@@ -29,3 +29,20 @@ def register():
     })
 
     return flask.jsonify({"success": True})
+
+@api.route("/auth/get_public_key", methods=["POST"])
+def get_public_key():
+    data = flask.request.get_json(silent=True, force=True)
+    if data is None:
+        return flask.jsonify({"error": "Invalid request"}), 400
+    
+    if "phoneNumber" not in data:
+        return flask.jsonify({"error": "Invalid request"}), 400
+    
+    phone_number = str(data["phoneNumber"])
+
+    user = db["users"].find_one({"phoneNumber": phone_number})
+    if user is None:
+        return flask.jsonify({"error": "User does not exist"}), 400
+    
+    return flask.jsonify({"publicKey": user["publicKey"]})
