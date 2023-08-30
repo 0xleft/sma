@@ -39,6 +39,15 @@ public class ContactDataSource {
         database.insert(ContactDatabaseHelper.TABLE_CONTACTS, null, values);
     }
 
+    public String getContactName(@NotNull String phoneNumber) {
+        Cursor cursor = database.query(ContactDatabaseHelper.TABLE_CONTACTS,
+                null, ContactDatabaseHelper.COLUMN_PHONE + " = " + phoneNumber, null, null, null, null);
+        cursor.moveToFirst();
+        @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(ContactDatabaseHelper.COLUMN_NAME));
+        cursor.close();
+        return name;
+    }
+
     public void removeContact(@NotNull Contact contact) {
         database.delete(ContactDatabaseHelper.TABLE_CONTACTS, ContactDatabaseHelper.COLUMN_PHONE + " = " + contact.getPhoneNumber(), null);
     }

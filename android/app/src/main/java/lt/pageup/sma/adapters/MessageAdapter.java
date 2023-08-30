@@ -31,7 +31,7 @@ public class MessageAdapter extends ArrayAdapter<Message> {
             }
         }
 
-        ((TextView) convertView.findViewById(R.id.message_content)).setText(message.getMessage());
+        ((TextView) convertView.findViewById(R.id.message_content)).setText(message.getPhoneNumber());
 
         return convertView;
     }

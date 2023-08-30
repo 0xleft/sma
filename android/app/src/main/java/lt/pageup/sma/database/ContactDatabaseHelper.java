@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class ContactDatabaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "sma.db";
+    private static final String DATABASE_NAME = "contacts_sma.db";
     private static final int DATABASE_VERSION = 1;
 
     public static final String TABLE_CONTACTS = "contacts";

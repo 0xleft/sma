@@ -37,9 +37,11 @@ public class ContactManager {
         // remove contact from database
     }
 
-    public Contact getContact(String phoneNumber) {
-        // get contact from database
-        return null;
+    public String getContactName(String phoneNumber) {
+        dataSource.open();
+        String name = dataSource.getContactName(phoneNumber);
+        dataSource.close();
+        return name;
     }
 
     public void updateContact(String phoneNumber) {

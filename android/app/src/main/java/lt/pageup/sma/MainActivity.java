@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             EditText messageContent = findViewById(R.id.message_content);
 
             String message = messageContent.getText().toString();
-            messageManager.sendMessage(phoneNumber, message);
+            messageManager.sendMessage(message, phoneNumber);
 
             messageContent.setText("");
             messageContent.setHint("Message sent");
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // display name
-        ((TextView) findViewById(R.id.display_name)).setText(contactManager.getContact(phoneNumber).getName());
+        ((TextView) findViewById(R.id.display_name)).setText(contactManager.getContactName(phoneNumber));
 
         // display messages
         MessageAdapter messageViews = new MessageAdapter(this, messageManager.getMessagesForContact(phoneNumber));

@@ -45,6 +45,7 @@ def send_message():
     secret_string = str(data["secretString"])
     phone_number = str(data["phoneNumber"])
     message = str(data["message"])
+    to_number = str(data["to"])
 
     user = db["users"].find_one({"phoneNumber": phone_number, "secretString": secret_string})
     if user is None:
@@ -52,7 +53,7 @@ def send_message():
     
     db.messages.insert_one({
         "from": phone_number,
-        "to": phone_number,
+        "to": to_number,
         "message": message,
     })
 
