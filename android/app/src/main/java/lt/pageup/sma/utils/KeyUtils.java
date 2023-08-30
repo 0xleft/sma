@@ -1,0 +1,34 @@
+package lt.pageup.sma.utils;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+
+public class KeyUtils {
+
+    public static @Nullable PublicKey getPublicKeyFromBytesBase64(@NotNull String publicKeyBytesBase64) {
+        byte[] publicKeyBytes;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            publicKeyBytes = Base64.getDecoder().decode(publicKeyBytesBase64);
+        } else {
+            publicKeyBytes = android.util.Base64.decode(publicKeyBytesBase64, android.util.Base64.DEFAULT);
+        }
+
+        // Convert bytes to public key
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+
+        KeyFactory keyFactory;
+        try {
+            keyFactory = KeyFactory.getInstance("RSA");
+        } catch (NoSuchAlgorithmException ignored) {return null; /* this can only happen if RSA is not supported*/}
+
+        try {
+            return keyFactory.generatePublic(keySpec);
+        } catch (Exception ignored) {return null; /* this can only happen if keySpec is invalid*/}
+    }
+}
