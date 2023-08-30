@@ -13,11 +13,13 @@ public class MessageDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_PHONE = "phone";
     public static final String COLUMN_MESSAGE = "message";
+    public static final String COLUMN_SELF = "self";
 
     private static final String DATABASE_CREATE = "create table " +
             TABLE_MESSAGES + "(" +
             COLUMN_ID + " integer primary key autoincrement, " +
             COLUMN_PHONE + " text not null, " +
+            COLUMN_SELF + " integer not null, " +
             COLUMN_MESSAGE + " text not null);";
 
     public MessageDatabaseHelper(Context context) {

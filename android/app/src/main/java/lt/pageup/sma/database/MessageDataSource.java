@@ -34,7 +34,22 @@ public class MessageDataSource {
         ContentValues values = new ContentValues();
         values.put(MessageDatabaseHelper.COLUMN_PHONE, message.getPhoneNumber());
         values.put(MessageDatabaseHelper.COLUMN_MESSAGE, message.getMessage());
+        values.put(MessageDatabaseHelper.COLUMN_SELF, message.isSelf());
         database.insert(MessageDatabaseHelper.TABLE_MESSAGES, null, values);
+    }
+
+    public List<Message> getContactMessages(String phoneNumber) {
+        List<Message> messages = new ArrayList<>();
+        Cursor cursor = database.query(MessageDatabaseHelper.TABLE_MESSAGES,
+                null, MessageDatabaseHelper.COLUMN_PHONE + " = " + phoneNumber, null, null, null, null);
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Message message = cursorToMessage(cursor);
+            messages.add(message);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return messages;
     }
 
     public List<Message> getAllMessages() {
@@ -54,7 +69,8 @@ public class MessageDataSource {
     private @NotNull Message cursorToMessage(Cursor cursor) {
         @SuppressLint("Range") String phoneNumber = cursor.getString(cursor.getColumnIndex(MessageDatabaseHelper.COLUMN_PHONE));
         @SuppressLint("Range") String message = cursor.getString(cursor.getColumnIndex(MessageDatabaseHelper.COLUMN_MESSAGE));
+        @SuppressLint("Range") int self = cursor.getInt(cursor.getColumnIndex(MessageDatabaseHelper.COLUMN_SELF));
 
-        return new Message(phoneNumber, message);
+        return new Message(phoneNumber, message, self == 1);
     }
 }

@@ -22,10 +22,19 @@ public class MessageManager {
 
     public void sendMessage(String phoneNumber, String message) {
         // make request to api to get public key
+        // encrypt message
+        // send message
+        // save message to database
+        dataSource.insertMessage(new Message(message, phoneNumber, true));
+    }
+
+    public void receiveMessage(String phoneNumber, String message) {
+        // decrypt message
+        // save message to database
+        dataSource.insertMessage(new Message(message, phoneNumber, false));
     }
 
     public List<Message> getMessagesForContact(String phoneNumber) {
-        // get messages from database
-        return null;
+        return dataSource.getContactMessages(phoneNumber);
     }
 }

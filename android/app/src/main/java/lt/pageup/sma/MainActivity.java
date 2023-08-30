@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import lt.pageup.sma.adapters.ContactAdapter;
+import lt.pageup.sma.adapters.MessageAdapter;
 import lt.pageup.sma.managers.ContactManager;
 import lt.pageup.sma.managers.KeyManager;
 import lt.pageup.sma.managers.MessageManager;
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     public void changeActivityMessage() {
         setContentView(R.layout.message_activity);
 
+        // send button
         findViewById(R.id.send_button).setOnClickListener(v -> {
             EditText messageContent = findViewById(R.id.message_content);
 
@@ -75,8 +78,19 @@ public class MainActivity extends AppCompatActivity {
 
             messageContent.setText("");
             messageContent.setHint("Message sent");
+
+            changeActivityMessage();
         });
 
+        // display name
+        ((TextView) findViewById(R.id.display_name)).setText(contactManager.getContact(phoneNumber).getName());
+
+        // display messages
+        MessageAdapter messageViews = new MessageAdapter(this, messageManager.getMessagesForContact(phoneNumber));
+        ListView messageList = findViewById(R.id.message_list);
+        messageList.setAdapter(messageViews);
+
+        // back button
         findViewById(R.id.back_button).setOnClickListener(v -> changeActivityContactList());
     }
 }

@@ -30,20 +30,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/message_content" />
 
-    <LinearLayout
-        android:id="@+id/message_list"
-        android:layout_width="391dp"
-        android:layout_height="600dp"
-        android:layout_marginStart="11dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="11dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/message_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/display_name"></LinearLayout>
-
     <TextView
         android:id="@+id/display_name"
         android:layout_width="390dp"
@@ -66,4 +52,13 @@
         android:text="Back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ListView
+        android:id="@+id/message_list"
+        android:layout_width="408dp"
+        android:layout_height="603dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="9dp"
+        app:layout_constraintBottom_toTopOf="@+id/message_content"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
