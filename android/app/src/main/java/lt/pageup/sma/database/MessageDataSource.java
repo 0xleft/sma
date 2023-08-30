@@ -37,10 +37,6 @@ public class MessageDataSource {
         database.insert(MessageDatabaseHelper.TABLE_MESSAGES, null, values);
     }
 
-    public void dropMessages() {
-        database.delete(MessageDatabaseHelper.TABLE_MESSAGES, null, null);
-    }
-
     public List<Message> getAllMessages() {
         List<Message> messages = new ArrayList<>();
         Cursor cursor = database.query(MessageDatabaseHelper.TABLE_MESSAGES,

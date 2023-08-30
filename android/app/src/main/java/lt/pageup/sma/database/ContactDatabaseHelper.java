@@ -5,17 +5,19 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class ContactDatabaseHelper extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "contact.db";
+    private static final String DATABASE_NAME = "sma.db";
     private static final int DATABASE_VERSION = 1;
 
     public static final String TABLE_CONTACTS = "contacts";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_PHONE = "phone";
     public static final String COLUMN_PUBLIC_KEY = "public_key";
+    public static final String COLUMN_NAME = "name";
 
-    private static final String DATABASE_CREATE = "create table " +
+    public static final String DATABASE_CREATE = "create table " +
             TABLE_CONTACTS + "(" +
             COLUMN_ID + " integer primary key autoincrement, " +
+            COLUMN_NAME + " text not null, " +
             COLUMN_PHONE + " text not null, " +
             COLUMN_PUBLIC_KEY + " text not null);";
 

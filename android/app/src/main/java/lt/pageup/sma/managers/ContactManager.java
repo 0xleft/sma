@@ -16,16 +16,21 @@ public class ContactManager {
     // we store public keys in sql database with all contacts and for private key we    // use shared preferences
 
     private List<Contact> contacts;
+    private ContactDataSource dataSource;
 
     public ContactManager(@NotNull Context context) {
-        ContactDataSource dataSource = new ContactDataSource(context);
+        dataSource = new ContactDataSource(context);
         dataSource.open();
         contacts = dataSource.getAllContacts();
         dataSource.close();
     }
 
-    public void addContact(String phoneNumber) {
-        // make request to api to get public key
+    public void addContact(String name, String phoneNumber) {
+        // TODO make request to api to get public key
+        dataSource.open();
+        dataSource.insertContact(new Contact(name, phoneNumber, ""));
+        contacts = dataSource.getAllContacts();
+        dataSource.close();
     }
 
     public void removeContact(String phoneNumber) {
@@ -39,5 +44,9 @@ public class ContactManager {
 
     public void updateContact(String phoneNumber) {
         // make request to api to get public key
+    }
+
+    public List<Contact> getContacts() {
+        return contacts;
     }
 }

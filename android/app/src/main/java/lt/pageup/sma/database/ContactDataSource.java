@@ -33,7 +33,9 @@ public class ContactDataSource {
     public void insertContact(@NotNull Contact contact) {
         ContentValues values = new ContentValues();
         values.put(ContactDatabaseHelper.COLUMN_PHONE, contact.getPhoneNumber());
-        values.put(ContactDatabaseHelper.COLUMN_PUBLIC_KEY, contact.getPublicKeyBytesBase64());
+        //values.put(ContactDatabaseHelper.COLUMN_PUBLIC_KEY, contact.getPublicKeyBytesBase64());
+        values.put(ContactDatabaseHelper.COLUMN_PUBLIC_KEY, "testKEY//TODO");
+        values.put(ContactDatabaseHelper.COLUMN_NAME, contact.getName());
         database.insert(ContactDatabaseHelper.TABLE_CONTACTS, null, values);
     }
 
@@ -58,7 +60,8 @@ public class ContactDataSource {
     private @NotNull Contact cursorToContact(Cursor cursor) {
         @SuppressLint("Range") String phoneNumber = cursor.getString(cursor.getColumnIndex(ContactDatabaseHelper.COLUMN_PHONE));
         @SuppressLint("Range") String publicKeyBytesBase64 = cursor.getString(cursor.getColumnIndex(ContactDatabaseHelper.COLUMN_PUBLIC_KEY));
+        @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(ContactDatabaseHelper.COLUMN_NAME));
 
-        return new Contact(phoneNumber, publicKeyBytesBase64);
+        return new Contact(name, phoneNumber, publicKeyBytesBase64);
     }
 }

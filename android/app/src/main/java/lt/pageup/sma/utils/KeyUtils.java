@@ -7,8 +7,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
@@ -44,5 +47,17 @@ public class KeyUtils {
         try {
             return keyFactory.generatePublic(keySpec);
         } catch (Exception ignored) {return null; /* this can only happen if keySpec is invalid*/}
+    }
+
+    public static @NotNull PrivateKey getPrivateKeyFromBytesBase64(@NotNull String privateKeyBytesBase64) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        byte[] publicKeyBytes = android.util.Base64.decode(privateKeyBytesBase64, android.util.Base64.DEFAULT);
+
+        // Convert bytes to public key
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(publicKeyBytes);
+
+        KeyFactory keyFactory;
+        keyFactory = KeyFactory.getInstance("RSA");
+
+        return keyFactory.generatePrivate(keySpec);
     }
 }

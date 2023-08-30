@@ -3,6 +3,7 @@ package lt.pageup.sma.managers;
 import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
+import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,10 +18,12 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
@@ -43,6 +46,7 @@ public class KeyManager {
 
         PrivateKey privateKey = getPrivateKeyKeyStore();
         if (privateKey == null) {
+            Log.e("BINGBONG", "KeyManager: Private key is null");
             try {
                 privateKey = addPrivateKey();
             } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException | KeyStoreException e) {
@@ -50,15 +54,18 @@ public class KeyManager {
             }
         }
 
-        this.privateKey = privateKey;
+        if (privateKey == null) {
+            throw new IllegalStateException("Private key is null");
+        }
 
-        // get the secret string from the local storage
+        this.privateKey = privateKey;
     }
 
     public @Nullable String generateSecretString() {
 
         String secretString = sharedPreferences.getString("secretString", "");
         if (secretString.isEmpty()) {
+            Log.e("BINGBONG", "generateSecretString: secretString is empty");
             secretString = KeyUtils.generateRandomString(10000);
             sharedPreferences.edit().putString("secretString", secretString).apply();
         }
@@ -67,48 +74,37 @@ public class KeyManager {
     }
 
     public @Nullable PrivateKey getPrivateKeyKeyStore() {
-            KeyStore keyStore;
-        try {
-            keyStore = KeyStore.getInstance("AndroidKeyStore");
-        } catch (KeyStoreException e) {return null;}
-
-        // init keystore
-        try {
-            keyStore.load(null);
-        } catch (CertificateException | NoSuchAlgorithmException | IOException e) {return null;}
+        String encodedPrivateKey = sharedPreferences.getString("privateKey", "");
+        if (encodedPrivateKey.isEmpty()) {
+            return null;
+        }
 
         try {
-            return (PrivateKey) keyStore.getKey("smalocal", "8423u86v543u629uu!%$#V(%$^!YU95t1u".toCharArray());
-        } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {return null;}
+            return KeyUtils.getPrivateKeyFromBytesBase64(encodedPrivateKey);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public @Nullable PrivateKey addPrivateKey() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, KeyStoreException {
-        KeyStore keyStore;
-        try {
-            keyStore = KeyStore.getInstance("AndroidKeyStore");
-        } catch (KeyStoreException e) {return null;}
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(4096);
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
-        // init keystore
-        try {
-            keyStore.load(null);
-        } catch (CertificateException | NoSuchAlgorithmException | IOException e) {return null;}
+        PrivateKey newPrivateKey = keyPair.getPrivate();
 
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(
-                KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore");
-        keyPairGenerator.initialize(new KeyGenParameterSpec.Builder(
-                "smalocal",
-                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                .build());
-        KeyPair newKeyPair = keyPairGenerator.generateKeyPair();
+        String newPrivateKeyBase64 = android.util.Base64.encodeToString(newPrivateKey.getEncoded(), android.util.Base64.DEFAULT);
 
-        PrivateKey newPrivateKey = newKeyPair.getPrivate();
-
-        // save private key
-        keyStore.setKeyEntry("smalocal", newPrivateKey, "8423u86v543u629uu!%$#V(%$^!YU95t1u".toCharArray(), new Certificate[0]);
+        sharedPreferences.edit().putString("privateKey", newPrivateKeyBase64).apply();
 
         // TODO
         // send the public key to the server with the current phone number and secretString to register the user
+
+        PublicKey publicKey = keyPair.getPublic();
+        String publicKeyBase64 = android.util.Base64.encodeToString(publicKey.getEncoded(), android.util.Base64.DEFAULT);
+
+        Log.d("KeyManager", "addPrivateKey: " + publicKeyBase64);
 
         return newPrivateKey;
     }

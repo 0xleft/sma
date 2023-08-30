@@ -17,16 +17,25 @@ import lt.pageup.sma.utils.KeyUtils;
 public class Contact {
     private String phoneNumber;
     private PublicKey publicKey;
+    private String name;
 
-    public Contact(@NotNull String phoneNumber, @NotNull String publicKeyBytesBase64) {
+    public Contact(@NotNull String name, @NotNull String phoneNumber, @NotNull String publicKeyBytesBase64) {
+        this.name = name;
 
+        // TODO
+        /*
         PublicKey publicKey = KeyUtils.getPublicKeyFromBytesBase64(publicKeyBytesBase64);
         if (publicKey == null) {
             throw new IllegalArgumentException("Invalid public key");
         }
+        */
 
         this.phoneNumber = phoneNumber;
         this.publicKey = publicKey;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getPhoneNumber() {
