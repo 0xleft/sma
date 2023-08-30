@@ -1,22 +1,15 @@
 package lt.pageup.sma;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.widget.LinearLayout;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import kotlinx.coroutines.channels.Receive;
 import lt.pageup.sma.adapters.ContactAdapter;
-import lt.pageup.sma.database.ContactDataSource;
-import lt.pageup.sma.database.ContactDatabaseHelper;
 import lt.pageup.sma.managers.ContactManager;
 import lt.pageup.sma.managers.KeyManager;
 import lt.pageup.sma.managers.MessageManager;
-import lt.pageup.sma.objects.Contact;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -75,9 +68,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.message_activity);
 
         findViewById(R.id.send_button).setOnClickListener(v -> {
-            String message = ((android.widget.EditText) findViewById(R.id.message_content)).getText().toString();
+            EditText messageContent = findViewById(R.id.message_content);
 
+            String message = messageContent.getText().toString();
             messageManager.sendMessage(phoneNumber, message);
+
+            messageContent.setText("");
+            messageContent.setHint("Message sent");
         });
+
+        findViewById(R.id.back_button).setOnClickListener(v -> changeActivityContactList());
     }
 }

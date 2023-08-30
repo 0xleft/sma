@@ -1,1 +1,1 @@
-A horrible attempt
+SMA - your messages are almost always encrypted :)
