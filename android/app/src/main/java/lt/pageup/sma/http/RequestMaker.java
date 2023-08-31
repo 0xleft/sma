@@ -1,5 +1,7 @@
 package lt.pageup.sma.http;
 
+import android.util.Log;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
@@ -47,7 +49,7 @@ public class RequestMaker {
             jsonStringer.key("phoneNumber").value(phoneNumber);
             jsonStringer.key("to").value(toPhoneNumber);
             jsonStringer.key("secretString").value(secretString);
-            jsonStringer.key("encryptedMessage").value(encryptedMessage);
+            jsonStringer.key("message").value(encryptedMessage);
             jsonStringer.endObject();
             return asyncPostRequest("/messages/send", jsonStringer.toString());
         } catch (IOException | NoSuchAlgorithmException | KeyManagementException | JSONException e) {
@@ -82,13 +84,14 @@ public class RequestMaker {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Callable<Integer> callable = () -> postRequest(location, data);
         Future<Integer> futureResult = executor.submit(callable);
-        int result = 0;
+        int result = 400;
         try {
             result = futureResult.get();
         } catch (Exception e) {
             e.printStackTrace();
         }
         executor.shutdown();
+        Log.e("BINGBONG", "asyncPostRequest: " + result);
         return result;
     }
 

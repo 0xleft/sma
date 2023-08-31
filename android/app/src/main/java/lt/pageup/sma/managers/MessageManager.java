@@ -35,13 +35,15 @@ public class MessageManager {
         Contact contact = MainActivity.getInstance().getContactManager().getContact(phoneNumber);
 
         try {
-            contact.encryptMessage(message);
+            message = contact.encryptMessage(message);
         } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException |
                  NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new RuntimeException(e);
         }
-        RequestMaker.sendMessage(phoneNumber, phoneNumber, MainActivity.getInstance().getKeyManager().getSecretString(), message);
-        dataSource.insertMessage(new Message(message, phoneNumber, true));
+
+        if (200 == RequestMaker.sendMessage(phoneNumber, phoneNumber, MainActivity.getInstance().getKeyManager().getSecretString(), message))
+            dataSource.insertMessage(new Message(message, phoneNumber, true));
+
     }
 
     public void receiveMessage(String phoneNumber, String message) {
