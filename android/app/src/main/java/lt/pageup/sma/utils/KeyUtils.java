@@ -30,11 +30,13 @@ public class KeyUtils {
 
     public static @Nullable PublicKey getPublicKeyFromBytesBase64(@NotNull String publicKeyBytesBase64) {
         byte[] publicKeyBytes;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            publicKeyBytes = Base64.getDecoder().decode(publicKeyBytesBase64);
-        } else {
+
+        try {
             publicKeyBytes = android.util.Base64.decode(publicKeyBytesBase64, android.util.Base64.DEFAULT);
+        } catch (IllegalArgumentException e) {
+            return null;
         }
+
 
         // Convert bytes to public key
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);

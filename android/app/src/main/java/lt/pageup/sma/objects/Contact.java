@@ -40,7 +40,7 @@ public class Contact {
         return publicKey;
     }
 
-    public String getPublicKeyBytesBase64() {
+    public String getBase64PublicKey() {
         return android.util.Base64.encodeToString(publicKey.getEncoded(), android.util.Base64.DEFAULT);
     }
 

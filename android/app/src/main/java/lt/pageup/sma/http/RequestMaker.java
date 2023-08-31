@@ -1,55 +1,65 @@
 package lt.pageup.sma.http;
 
-import android.annotation.SuppressLint;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class RequestMaker {
 
-    //private static final String BASE_URL = "https://pageup.lt/api/sma";
-    private static final String BASE_URL = "http://127.0.0.1:5000";
+    private static final String BASE_URL = "https://pageup.lt/api/sma";
 
-    public static @Nullable JSONObject register(String phoneNumber, String secretString, String publicKey) {
+    public static int register(String phoneNumber, String secretString, String publicKey) {
         try {
-            return postRequest("/auth/register", "{\"phoneNumber\":\"" + phoneNumber + "\",\"secretString\":\"" + secretString + "\",\"publicKey\":\"" + publicKey + "\"}");
+            JSONStringer jsonStringer = new JSONStringer();
+            jsonStringer.object();
+            jsonStringer.key("phoneNumber").value(phoneNumber);
+            jsonStringer.key("secretString").value(secretString);
+            jsonStringer.key("publicKey").value(publicKey);
+            jsonStringer.endObject();
+            return asyncPostRequest("/auth/register", jsonStringer.toString());
         } catch (IOException | NoSuchAlgorithmException | KeyManagementException | JSONException e) {
             e.printStackTrace();
-            return null;
+            return 400;
         }
     }
 
-    public static @Nullable JSONObject sendMessage(String phoneNumber, String toPhoneNumber, String secretString, String encryptedMessage) {
+    public static int sendMessage(String phoneNumber, String toPhoneNumber, String secretString, String encryptedMessage) {
         try {
-            return postRequest("/messages/send", "{\"phoneNumber\":\"" + phoneNumber + "\",\"secretString\":\"" + secretString + "\",\"to\":\"" + toPhoneNumber + "\",\"message\":\"" + encryptedMessage + "\"}");
+            JSONStringer jsonStringer = new JSONStringer();
+            jsonStringer.object();
+            jsonStringer.key("phoneNumber").value(phoneNumber);
+            jsonStringer.key("to").value(toPhoneNumber);
+            jsonStringer.key("secretString").value(secretString);
+            jsonStringer.key("encryptedMessage").value(encryptedMessage);
+            jsonStringer.endObject();
+            return asyncPostRequest("/messages/send", jsonStringer.toString());
         } catch (IOException | NoSuchAlgorithmException | KeyManagementException | JSONException e) {
             e.printStackTrace();
-            return null;
+            return 400;
         }
     }
 
     public static @Nullable JSONObject getMessages(String phoneNumber, String secretString) {
         try {
-            return postRequest("/messages", "{\"phoneNumber\":\"" + phoneNumber + "\",\"secretString\":\"" + secretString + "\"}");
-        } catch (IOException | NoSuchAlgorithmException | KeyManagementException | JSONException e) {
+            return asyncGetRequest("/messages", "phoneNumber=" + phoneNumber + "&secretString=" + secretString);
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
             return null;
         }
@@ -61,50 +71,64 @@ public class RequestMaker {
      */
     public static String getPublicKey(String phoneNumber) {
         try {
-            return postRequest("/auth/get_public_key", "{\"phoneNumber\":\"" + phoneNumber + "\"}").getString("publicKey");
-        } catch (IOException | NoSuchAlgorithmException | KeyManagementException | JSONException e) {
+            return asyncGetRequest("/auth/get_public_key", "phoneNumber=" + phoneNumber).getString("publicKey");
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static @NotNull JSONObject postRequest(String location, String data) throws IOException, NoSuchAlgorithmException, KeyManagementException, JSONException {
-        @SuppressLint("CustomX509TrustManager") TrustManager[] trustAllCertificates = new TrustManager[] {
-                new X509TrustManager() {
-                    @Override
-                    public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                    }
+    public static int asyncPostRequest(String location, String data) throws IOException, NoSuchAlgorithmException, KeyManagementException, JSONException {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Callable<Integer> callable = () -> postRequest(location, data);
+        Future<Integer> futureResult = executor.submit(callable);
+        int result = 0;
+        try {
+            result = futureResult.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        executor.shutdown();
+        return result;
+    }
 
-                    @Override
-                    public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                    }
+    public static @Nullable JSONObject asyncGetRequest(String location, String query) throws IOException, JSONException {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Callable<JSONObject> callable = () -> getRequest(location, query);
+        Future<JSONObject> futureResult = executor.submit(callable);
+        JSONObject result = null;
+        try {
+            result = futureResult.get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        executor.shutdown();
+        return result;
+    }
 
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return new X509Certificate[0];
-                    }
-                }
-        };
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustAllCertificates, new java.security.SecureRandom());
-
-        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-        HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
-
+    public static int postRequest(String location, String data) throws IOException {
         URL url = new URL(BASE_URL + location);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("POST");
         connection.setConnectTimeout(5000);
-        connection.setRequestProperty("User-Agent", "sma user agent");
         connection.setRequestProperty("Content-Type", "application/json");
-        connection.setDoOutput(true);
 
         try (DataOutputStream wr = new DataOutputStream(connection.getOutputStream())) {
             wr.writeBytes(data);
             wr.flush();
         }
+
+        return connection.getResponseCode();
+    }
+
+    public static @NotNull JSONObject getRequest(String location, String query) throws IOException, JSONException {
+        URL url = new URL(BASE_URL + location + "?" + query);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(5000);
+        connection.setRequestProperty("Content-Type", "application/json");
 
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;

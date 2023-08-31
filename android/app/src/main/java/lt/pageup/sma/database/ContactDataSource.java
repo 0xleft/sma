@@ -35,7 +35,7 @@ public class ContactDataSource {
     public void insertContact(@NotNull Contact contact) {
         ContentValues values = new ContentValues();
         values.put(ContactDatabaseHelper.COLUMN_PHONE, contact.getPhoneNumber());
-        values.put(ContactDatabaseHelper.COLUMN_PUBLIC_KEY, contact.getPublicKeyBytesBase64());
+        values.put(ContactDatabaseHelper.COLUMN_PUBLIC_KEY, contact.getBase64PublicKey());
         values.put(ContactDatabaseHelper.COLUMN_NAME, contact.getName());
         database.insert(ContactDatabaseHelper.TABLE_CONTACTS, null, values);
     }

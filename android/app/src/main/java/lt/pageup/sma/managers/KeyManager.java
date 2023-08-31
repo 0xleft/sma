@@ -63,6 +63,7 @@ public class KeyManager {
         }
 
         this.privateKey = privateKey;
+        submitPublicKey();
     }
 
     public @Nullable String generateSecretString() {
@@ -104,9 +105,28 @@ public class KeyManager {
 
         PublicKey publicKey = keyPair.getPublic();
         String publicKeyBase64 = android.util.Base64.encodeToString(publicKey.getEncoded(), android.util.Base64.DEFAULT);
-        Log.w("BINGBONG",String.valueOf(RequestMaker.register("BOGIJ", secretString, publicKeyBase64)));
+
+        sharedPreferences.edit().putString("publicKey", publicKeyBase64).apply();
 
         return newPrivateKey;
+    }
+
+    private int submitPublicKey() {
+        String publicKeyBase64 = sharedPreferences.getString("publicKey", "");
+        if (publicKeyBase64.isEmpty()) {
+            Log.e("BINGBONG", "submitPublicKey: Public key is empty");
+            return 400;
+        }
+
+        int response = RequestMaker.register(MainActivity.getInstance().getMyPhoneNumber(), secretString, publicKeyBase64);
+
+        if (response != 200) {
+            Log.e("BINGBONG", "submitPublicKey: Failed to register" + response);
+            return response;
+        }
+
+        Log.e("BINGBONG", "submitPublicKey: Successfully registered");
+        return 200;
     }
 
     public String getSecretString() {
