@@ -22,13 +22,7 @@ public class Contact {
     public Contact(@NotNull String name, @NotNull String phoneNumber, @NotNull String publicKeyBytesBase64) {
         this.name = name;
 
-        // TODO
-        /*
         PublicKey publicKey = KeyUtils.getPublicKeyFromBytesBase64(publicKeyBytesBase64);
-        if (publicKey == null) {
-            throw new IllegalArgumentException("Invalid public key");
-        }
-        */
 
         this.phoneNumber = phoneNumber;
         this.publicKey = publicKey;

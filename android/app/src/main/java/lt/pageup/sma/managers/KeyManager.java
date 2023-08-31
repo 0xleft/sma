@@ -1,8 +1,10 @@
 package lt.pageup.sma.managers;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +33,8 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import lt.pageup.sma.MainActivity;
+import lt.pageup.sma.http.RequestMaker;
 import lt.pageup.sma.utils.KeyUtils;
 
 public class KeyManager {
@@ -98,13 +102,9 @@ public class KeyManager {
 
         sharedPreferences.edit().putString("privateKey", newPrivateKeyBase64).apply();
 
-        // TODO
-        // send the public key to the server with the current phone number and secretString to register the user
-
         PublicKey publicKey = keyPair.getPublic();
         String publicKeyBase64 = android.util.Base64.encodeToString(publicKey.getEncoded(), android.util.Base64.DEFAULT);
-
-        Log.d("KeyManager", "addPrivateKey: " + publicKeyBase64);
+        Log.w("BINGBONG",String.valueOf(RequestMaker.register("BOGIJ", secretString, publicKeyBase64)));
 
         return newPrivateKey;
     }

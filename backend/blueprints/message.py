@@ -2,7 +2,7 @@ import pymongo
 import flask
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
-db = client["main"]
+db = client["sma"]
 
 api = flask.Blueprint("messages", __name__)
 
@@ -27,7 +27,7 @@ def get_messages():
 
     return flask.jsonify({
         "messages": [{
-            "from": message["from"],
+            "from": message["from"], 
             "to": message["to"],
             "message": message["message"],
         } for message in messages]

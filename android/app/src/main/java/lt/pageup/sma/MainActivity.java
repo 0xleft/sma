@@ -1,8 +1,12 @@
 package lt.pageup.sma;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -20,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private KeyManager keyManager;
     private MessageManager messageManager;
     private String phoneNumber;
+    private String myPhoneNumber;
 
     private static MainActivity instance;
 
@@ -42,6 +47,22 @@ public class MainActivity extends AppCompatActivity {
         this.messageManager = new MessageManager(getBaseContext());
 
         changeActivityContactList();
+    }
+
+    public String getMyPhoneNumber() {
+        return myPhoneNumber;
+    }
+
+    public ContactManager getContactManager() {
+        return contactManager;
+    }
+
+    public KeyManager getKeyManager() {
+        return keyManager;
+    }
+
+    public MessageManager getMessageManager() {
+        return messageManager;
     }
 
     public void changeActivityAddContact() {

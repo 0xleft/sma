@@ -2,7 +2,7 @@ import pymongo
 import flask
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
-db = client["main"]
+db = client["sma"]
 
 api = flask.Blueprint("auth", __name__)
 

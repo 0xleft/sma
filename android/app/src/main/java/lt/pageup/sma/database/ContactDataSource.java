@@ -9,10 +9,12 @@ import android.database.sqlite.SQLiteDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
 import lt.pageup.sma.objects.Contact;
+import lt.pageup.sma.utils.KeyUtils;
 
 public class ContactDataSource {
     private SQLiteDatabase database;
@@ -33,10 +35,18 @@ public class ContactDataSource {
     public void insertContact(@NotNull Contact contact) {
         ContentValues values = new ContentValues();
         values.put(ContactDatabaseHelper.COLUMN_PHONE, contact.getPhoneNumber());
-        //values.put(ContactDatabaseHelper.COLUMN_PUBLIC_KEY, contact.getPublicKeyBytesBase64());
-        values.put(ContactDatabaseHelper.COLUMN_PUBLIC_KEY, "testKEY//TODO");
+        values.put(ContactDatabaseHelper.COLUMN_PUBLIC_KEY, contact.getPublicKeyBytesBase64());
         values.put(ContactDatabaseHelper.COLUMN_NAME, contact.getName());
         database.insert(ContactDatabaseHelper.TABLE_CONTACTS, null, values);
+    }
+
+    public Contact getContact(@NotNull String phoneNumber) {
+        Cursor cursor = database.query(ContactDatabaseHelper.TABLE_CONTACTS,
+                null, ContactDatabaseHelper.COLUMN_PHONE + " = " + phoneNumber, null, null, null, null);
+        cursor.moveToFirst();
+        Contact contact = cursorToContact(cursor);
+        cursor.close();
+        return contact;
     }
 
     public String getContactName(@NotNull String phoneNumber) {
@@ -46,6 +56,16 @@ public class ContactDataSource {
         @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(ContactDatabaseHelper.COLUMN_NAME));
         cursor.close();
         return name;
+    }
+
+    public PublicKey getContactPublicKey(@NotNull String phoneNumber) {
+        Cursor cursor = database.query(ContactDatabaseHelper.TABLE_CONTACTS,
+                null, ContactDatabaseHelper.COLUMN_PHONE + " = " + phoneNumber, null, null, null, null);
+        cursor.moveToFirst();
+        @SuppressLint("Range") String publicKeyBytesBase64 = cursor.getString(cursor.getColumnIndex(ContactDatabaseHelper.COLUMN_PUBLIC_KEY));
+        cursor.close();
+
+        return KeyUtils.getPublicKeyFromBytesBase64(publicKeyBytesBase64);
     }
 
     public void removeContact(@NotNull Contact contact) {

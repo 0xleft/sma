@@ -4,10 +4,20 @@ import android.content.Context;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.List;
 
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import lt.pageup.sma.MainActivity;
 import lt.pageup.sma.database.MessageDataSource;
+import lt.pageup.sma.http.RequestMaker;
+import lt.pageup.sma.objects.Contact;
 import lt.pageup.sma.objects.Message;
 
 public class MessageManager {
@@ -21,10 +31,16 @@ public class MessageManager {
     }
 
     public void sendMessage(String phoneNumber, String message) {
-        // make request to api to get public key
-        // encrypt message
-        // send message
-        // save message to database
+        // get public key
+        Contact contact = MainActivity.getInstance().getContactManager().getContact(phoneNumber);
+
+        try {
+            contact.encryptMessage(message);
+        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException |
+                 NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new RuntimeException(e);
+        }
+        RequestMaker.sendMessage(phoneNumber, phoneNumber, MainActivity.getInstance().getKeyManager().getSecretString(), message);
         dataSource.insertMessage(new Message(message, phoneNumber, true));
     }
 
