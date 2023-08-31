@@ -8,6 +8,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class ContactDataSource {
         database.insert(ContactDatabaseHelper.TABLE_CONTACTS, null, values);
     }
 
-    public Contact getContact(@NotNull String phoneNumber) {
+    public @Nullable Contact getContact(@NotNull String phoneNumber) {
         Cursor cursor = database.query(ContactDatabaseHelper.TABLE_CONTACTS,
                 null, ContactDatabaseHelper.COLUMN_PHONE + " = " + phoneNumber, null, null, null, null);
         cursor.moveToFirst();
