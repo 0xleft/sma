@@ -41,22 +41,7 @@ public class MessageManager {
             return;
         }
 
-        Contact contact = MainActivity.getInstance().getContactManager().getContact(phoneNumber);
-
-        if (contact == null) {
-            return;
-        }
-
-        String encryptedMessage;
-        try {
-            encryptedMessage = contact.encryptMessage(message);
-        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException |
-                 NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (200 == RequestMaker.sendMessage(phoneNumber, phoneNumber, MainActivity.getInstance().getKeyManager().getSecretString(), encryptedMessage))
-            dataSource.insertMessage(new Message(message, phoneNumber, true));
+        RequestMaker.sendMessage(phoneNumber, phoneNumber, MainActivity.getInstance().getKeyManager().getSecretString(), message, dataSource);
     }
 
     public void receiveMessage(String phoneNumber, String message) {

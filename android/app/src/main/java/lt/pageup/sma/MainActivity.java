@@ -113,6 +113,16 @@ public class MainActivity extends AppCompatActivity {
     public void changeActivityContactList() {
         setContentView(R.layout.contact_list_activity);
 
+        // my phone
+        ((TextView) findViewById(R.id.my_phone)).setText(myPhoneNumber);
+        findViewById(R.id.my_phone).setOnClickListener(v -> {
+            android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text", myPhoneNumber);
+            clipboard.setPrimaryClip(clip);
+
+            android.widget.Toast.makeText(this, "Copied to clipboard", android.widget.Toast.LENGTH_SHORT).show();
+        });
+
         findViewById(R.id.add_contact_button).setOnClickListener(v -> changeActivityAddContact());
 
         ContactAdapter contactViews = new ContactAdapter(this, contactManager.getContacts());
