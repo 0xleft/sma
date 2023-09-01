@@ -158,7 +158,8 @@ public class MainActivity extends AppCompatActivity {
         MessageAdapter messageViews = new MessageAdapter(this, messageManager.getMessagesForContact(phoneNumber));
         ListView messageList = findViewById(R.id.message_list);
         messageList.setAdapter(messageViews);
-
+        // scroll to bottom
+        messageList.setSelection(messageViews.getCount() - 1);
         // back button
         findViewById(R.id.back_button).setOnClickListener(v -> changeActivityContactList());
     }
