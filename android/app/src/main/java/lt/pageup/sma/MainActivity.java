@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             String name = ((android.widget.EditText) findViewById(R.id.name)).getText().toString();
             String phoneNumber = ((android.widget.EditText) findViewById(R.id.phone)).getText().toString();
 
-            contactManager.addContact(name, phoneNumber);
+            contactManager.addContact(name, phoneNumber, getBaseContext());
             changeActivityContactList();
         });
     }

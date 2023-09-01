@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -31,7 +32,7 @@ public class ContactManager {
         dataSource.close();
     }
 
-    public void addContact(String name, String phoneNumber) {
+    public void addContact(String name, String phoneNumber, @Nullable Context context) {
 
         String publicKey = RequestMaker.getPublicKey(phoneNumber);
 
@@ -44,6 +45,9 @@ public class ContactManager {
         PublicKey key = KeyUtils.getPublicKeyFromBytesBase64(publicKey);
 
         if (key == null) {
+            if (context != null) {
+                android.widget.Toast.makeText(context, "Contact is invalid", android.widget.Toast.LENGTH_SHORT).show();
+            }
             return;
         }
 

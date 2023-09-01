@@ -58,7 +58,7 @@ public class MessageManager {
         // if contact is not in database, add it
         Contact contact = MainActivity.getInstance().getContactManager().getContact(phoneNumber);
         if (contact == null) {
-            MainActivity.getInstance().getContactManager().addContact(phoneNumber, phoneNumber);
+            MainActivity.getInstance().getContactManager().addContact(phoneNumber, phoneNumber, null);
         }
 
         dataSource.insertMessage(new Message(decryptedMessage, phoneNumber, false));
