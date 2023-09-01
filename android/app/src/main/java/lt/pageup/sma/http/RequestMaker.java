@@ -73,6 +73,7 @@ public class RequestMaker {
             jsonStringer.object();
             jsonStringer.key("phoneNumber").value(phoneNumber);
             jsonStringer.key("to").value(toPhoneNumber);
+            Log.w("BINGBONG", "sendMessage: " + secretString);
             jsonStringer.key("secretString").value(secretString);
             jsonStringer.key("message").value(encryptedMessage);
             jsonStringer.endObject();

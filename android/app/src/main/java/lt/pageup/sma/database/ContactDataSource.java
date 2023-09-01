@@ -43,7 +43,7 @@ public class ContactDataSource {
 
     public @Nullable Contact getContact(@NotNull String phoneNumber) {
         Cursor cursor = database.query(ContactDatabaseHelper.TABLE_CONTACTS,
-                null, ContactDatabaseHelper.COLUMN_PHONE + " = " + phoneNumber, null, null, null, null);
+                null, ContactDatabaseHelper.COLUMN_PHONE + " = '" + phoneNumber + "'", null, null, null, null);
         cursor.moveToFirst();
         Contact contact = cursorToContact(cursor);
         cursor.close();
@@ -52,7 +52,7 @@ public class ContactDataSource {
 
     public String getContactName(@NotNull String phoneNumber) {
         Cursor cursor = database.query(ContactDatabaseHelper.TABLE_CONTACTS,
-                null, ContactDatabaseHelper.COLUMN_PHONE + " = " + phoneNumber, null, null, null, null);
+                null, ContactDatabaseHelper.COLUMN_PHONE + " = '" + phoneNumber + "'", null, null, null, null);
         cursor.moveToFirst();
         @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(ContactDatabaseHelper.COLUMN_NAME));
         cursor.close();
@@ -61,16 +61,12 @@ public class ContactDataSource {
 
     public PublicKey getContactPublicKey(@NotNull String phoneNumber) {
         Cursor cursor = database.query(ContactDatabaseHelper.TABLE_CONTACTS,
-                null, ContactDatabaseHelper.COLUMN_PHONE + " = " + phoneNumber, null, null, null, null);
+                null, ContactDatabaseHelper.COLUMN_PHONE + " = '" + phoneNumber + "'", null, null, null, null);
         cursor.moveToFirst();
         @SuppressLint("Range") String publicKeyBytesBase64 = cursor.getString(cursor.getColumnIndex(ContactDatabaseHelper.COLUMN_PUBLIC_KEY));
         cursor.close();
 
         return KeyUtils.getPublicKeyFromBytesBase64(publicKeyBytesBase64);
-    }
-
-    public void removeContact(@NotNull Contact contact) {
-        database.delete(ContactDatabaseHelper.TABLE_CONTACTS, ContactDatabaseHelper.COLUMN_PHONE + " = " + contact.getPhoneNumber(), null);
     }
 
     public List<Contact> getAllContacts() {

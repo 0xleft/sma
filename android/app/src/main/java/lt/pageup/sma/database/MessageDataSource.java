@@ -41,7 +41,7 @@ public class MessageDataSource {
     public List<Message> getContactMessages(String phoneNumber) {
         List<Message> messages = new ArrayList<>();
         Cursor cursor = database.query(MessageDatabaseHelper.TABLE_MESSAGES,
-                null, MessageDatabaseHelper.COLUMN_PHONE + " = " + phoneNumber, null, null, null, null);
+                null, MessageDatabaseHelper.COLUMN_PHONE + " = '" + phoneNumber + "'", null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Message message = cursorToMessage(cursor);

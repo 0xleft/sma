@@ -41,7 +41,7 @@ public class MessageManager {
             return;
         }
 
-        RequestMaker.sendMessage(phoneNumber, phoneNumber, MainActivity.getInstance().getKeyManager().getSecretString(), message, dataSource);
+        RequestMaker.sendMessage(MainActivity.getInstance().getMyPhoneNumber(), phoneNumber, MainActivity.getInstance().getKeyManager().getSecretString(), message, dataSource);
     }
 
     public void receiveMessage(String phoneNumber, String message) {

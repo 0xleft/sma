@@ -47,6 +47,7 @@ public class KeyManager {
         this.sharedPreferences = sharedPreferences;
 
         this.secretString = generateSecretString();
+        Log.w("BINBONG", "" + this.secretString);
 
         PrivateKey privateKey = getPrivateKeyKeyStore();
         if (privateKey == null) {
