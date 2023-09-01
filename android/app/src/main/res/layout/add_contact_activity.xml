@@ -51,10 +51,12 @@
         android:id="@+id/cancel_button"
         android:layout_width="106dp"
         android:layout_height="57dp"
+        android:layout_marginStart="290dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="2dp"
+        android:layout_marginEnd="16dp"
         android:text="cancel"
         android:textColorLink="@color/red"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

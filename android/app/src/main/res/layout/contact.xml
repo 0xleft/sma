@@ -5,22 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/contact_name"
-        android:layout_width="374dp"
-        android:layout_height="29dp"
+    <LinearLayout
+        android:layout_width="369dp"
+        android:layout_height="88dp"
         android:layout_marginStart="18dp"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/contact_phone"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/contact_phone"
-        android:layout_width="373dp"
-        android:layout_height="22dp"
-        android:layout_marginStart="18dp"
-        android:text="4317463217463"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="24dp"
+        android:clickable="false"
+        android:fadingEdge="none"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/contact_name" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/contact_name"
+            android:layout_width="344dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="10dp"
+            android:text="Name" />
+
+        <TextView
+            android:id="@+id/contact_phone"
+            android:layout_width="344dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:text="4317463217463" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

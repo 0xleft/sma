@@ -8,10 +8,10 @@
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/message_content"
-        android:layout_width="335dp"
-        android:layout_height="49dp"
+        android:layout_width="243dp"
+        android:layout_height="51dp"
         android:layout_marginStart="11dp"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="28dp"
         android:backgroundTint="@color/blue"
         android:hint="hint"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,10 +20,10 @@
 
     <Button
         android:id="@+id/send_button"
-        android:layout_width="56dp"
-        android:layout_height="49dp"
+        android:layout_width="80dp"
+        android:layout_height="50dp"
         android:layout_marginEnd="9dp"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="28dp"
         android:text=">"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -55,11 +55,16 @@
 
     <ListView
         android:id="@+id/message_list"
-        android:layout_width="408dp"
-        android:layout_height="603dp"
-        android:layout_marginEnd="2dp"
-        android:layout_marginBottom="9dp"
+        android:layout_width="359dp"
+        android:layout_height="562dp"
+        android:layout_marginStart="29dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
         android:overScrollMode="ifContentScrolls"
         app:layout_constraintBottom_toTopOf="@+id/message_content"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back_button" />
 </androidx.constraintlayout.widget.ConstraintLayout>
