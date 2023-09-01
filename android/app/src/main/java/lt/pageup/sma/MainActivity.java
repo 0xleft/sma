@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.security.Permission;
+
 import lt.pageup.sma.adapters.ContactAdapter;
 import lt.pageup.sma.adapters.MessageAdapter;
 import lt.pageup.sma.managers.ContactManager;
@@ -47,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         instance = this;
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
+        }
         changeRegisterScreen();
     }
 
