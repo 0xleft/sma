@@ -91,6 +91,7 @@ public class RequestMaker {
                     } else {
                         datasource.insertMessage(new Message("failed to send", toPhoneNumber, true));
                     }
+                    MainActivity.getInstance().runOnUiThread(() -> MainActivity.getInstance().changeActivityMessage());
                 } catch (IOException | NoSuchAlgorithmException | KeyManagementException |
                          JSONException e) {
                     e.printStackTrace();
