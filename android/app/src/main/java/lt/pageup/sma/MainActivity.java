@@ -19,6 +19,7 @@ import lt.pageup.sma.adapters.MessageAdapter;
 import lt.pageup.sma.managers.ContactManager;
 import lt.pageup.sma.managers.KeyManager;
 import lt.pageup.sma.managers.MessageManager;
+import lt.pageup.sma.utils.MessageChecker;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         this.messageManager = new MessageManager(getBaseContext());
 
         changeActivityContactList();
+        new MessageChecker();
     }
 
     public String getMyPhoneNumber() {
@@ -95,11 +97,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void changeActivityMessage() {
         setContentView(R.layout.message_activity);
+        EditText messageContent = findViewById(R.id.message_content);
+        messageContent.setHint("Message");
 
         // send button
         findViewById(R.id.send_button).setOnClickListener(v -> {
-            EditText messageContent = findViewById(R.id.message_content);
-
             String message = messageContent.getText().toString();
             messageManager.sendMessage(phoneNumber, message);
 

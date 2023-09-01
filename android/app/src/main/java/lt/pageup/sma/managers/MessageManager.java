@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import lt.pageup.sma.database.MessageDataSource;
 import lt.pageup.sma.http.RequestMaker;
 import lt.pageup.sma.objects.Contact;
 import lt.pageup.sma.objects.Message;
+import lt.pageup.sma.utils.KeyUtils;
 
 public class MessageManager {
 
@@ -55,13 +57,20 @@ public class MessageManager {
 
         if (200 == RequestMaker.sendMessage(phoneNumber, phoneNumber, MainActivity.getInstance().getKeyManager().getSecretString(), encryptedMessage))
             dataSource.insertMessage(new Message(message, phoneNumber, true));
-
     }
 
     public void receiveMessage(String phoneNumber, String message) {
         // decrypt message
-        // save message to database
-        dataSource.insertMessage(new Message(message, phoneNumber, false));
+        PrivateKey privateKey = MainActivity.getInstance().getKeyManager().getPrivateKey();
+        String decryptedMessage;
+        try {
+            decryptedMessage = KeyUtils.decryptMessage(message, privateKey);
+        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException |
+                 NoSuchAlgorithmException | NoSuchPaddingException e) {
+            decryptedMessage = "Could not decrypt message";
+        }
+
+        dataSource.insertMessage(new Message(decryptedMessage, phoneNumber, false));
     }
 
     public List<Message> getMessagesForContact(String phoneNumber) {

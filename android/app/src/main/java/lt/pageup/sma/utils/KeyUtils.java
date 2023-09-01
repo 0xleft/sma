@@ -5,6 +5,7 @@ import android.os.Build;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -14,6 +15,11 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class KeyUtils {
 
@@ -26,6 +32,16 @@ public class KeyUtils {
         } else {
             return android.util.Base64.encodeToString(randomBytes, android.util.Base64.URL_SAFE | android.util.Base64.NO_PADDING | android.util.Base64.NO_WRAP);
         }
+    }
+
+    public static String decryptMessage(@NotNull String message, @NotNull PrivateKey privateKey) throws NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidKeyException {
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.DECRYPT_MODE, privateKey);
+
+        byte[] encryptedBytes = android.util.Base64.decode(message, android.util.Base64.DEFAULT);
+        byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+
+        return new String(decryptedBytes);
     }
 
     public static @Nullable PublicKey getPublicKeyFromBytesBase64(@NotNull String publicKeyBytesBase64) {
