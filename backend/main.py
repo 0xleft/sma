@@ -13,7 +13,7 @@ def get_messages():
     phone_number = flask.request.args.get("phoneNumber")
     secret_string = flask.request.headers.get("secretString")
 
-    user = db["users"].find_one({"phoneNumber": phone_number, "secretString": hashlib.sha256(secret_string).hexdigest()})
+    user = db["users"].find_one({"phoneNumber": phone_number, "secretString": hashlib.sha256(secret_string.encode()).hexdigest()})
     if user is None:
         return flask.jsonify({"error": "Invalid credentials"}), 401
     
@@ -42,7 +42,7 @@ def send_message():
     message = str(data["message"])
     to_number = str(data["to"])
 
-    user = db["users"].find_one({"phoneNumber": phone_number, "secretString": hashlib.sha256(secret_string).hexdigest()})
+    user = db["users"].find_one({"phoneNumber": phone_number, "secretString": hashlib.sha256(secret_string.encode()).hexdigest()})
     if user is None:
         return flask.jsonify({"error": "Invalid credentials"}), 403
     
@@ -73,7 +73,7 @@ def register():
     db["users"].insert_one({
         "phoneNumber": phone_number,
         "publicKey": public_key,
-        "secretString": hashlib.sha256(secret_string).hexdigest(),
+        "secretString": hashlib.sha256(secret_string.encode()).hexdigest(),
     })
 
     return flask.jsonify({"success": True})
