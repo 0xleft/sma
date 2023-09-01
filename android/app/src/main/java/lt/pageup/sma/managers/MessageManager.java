@@ -70,6 +70,12 @@ public class MessageManager {
             decryptedMessage = "Could not decrypt message";
         }
 
+        // if contact is not in database, add it
+        Contact contact = MainActivity.getInstance().getContactManager().getContact(phoneNumber);
+        if (contact == null) {
+            MainActivity.getInstance().getContactManager().addContact(phoneNumber, phoneNumber);
+        }
+
         dataSource.insertMessage(new Message(decryptedMessage, phoneNumber, false));
     }
 

@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -39,21 +41,13 @@ public class MainActivity extends AppCompatActivity {
         this.phoneNumber = phoneNumber;
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // get phone number
-        this.myPhoneNumber = "2";
-
         instance = this;
 
-        this.keyManager = new KeyManager(getSharedPreferences("sma", MODE_PRIVATE));
-        this.contactManager = new ContactManager(getBaseContext());
-        this.messageManager = new MessageManager(getBaseContext());
-
-        changeActivityContactList();
-        new MessageChecker();
+        changeRegisterScreen();
     }
 
     public String getMyPhoneNumber() {
@@ -70,6 +64,37 @@ public class MainActivity extends AppCompatActivity {
 
     public MessageManager getMessageManager() {
         return messageManager;
+    }
+
+    public void changeRegisterScreen() {
+        setContentView(R.layout.register_activity);
+
+        if (!getSharedPreferences("sma", MODE_PRIVATE).getString("username", "").isEmpty()) {
+            this.myPhoneNumber = getSharedPreferences("sma", MODE_PRIVATE).getString("username", "");
+            this.keyManager = new KeyManager(getSharedPreferences("sma", MODE_PRIVATE));
+            this.contactManager = new ContactManager(getBaseContext());
+            this.messageManager = new MessageManager(getBaseContext());
+
+            changeActivityContactList();
+            new MessageChecker();
+            return;
+        }
+
+        findViewById(R.id.register_button).setOnClickListener(v -> {
+            String username = ((android.widget.EditText) findViewById(R.id.username)).getText().toString();
+
+            if (username.isEmpty()) {
+                return;
+            }
+
+
+            this.myPhoneNumber = username;
+            this.keyManager = new KeyManager(getSharedPreferences("sma", MODE_PRIVATE));
+            if (this.keyManager.submitPublicKey() == 200) {
+                getSharedPreferences("sma", MODE_PRIVATE).edit().putString("username", username).apply();
+            }
+            changeRegisterScreen();
+        });
     }
 
     public void changeActivityAddContact() {

@@ -63,16 +63,15 @@ public class KeyManager {
         }
 
         this.privateKey = privateKey;
-        submitPublicKey();
     }
 
     public @Nullable String generateSecretString() {
 
-        String secretString = sharedPreferences.getString("secretString", "");
+        String secretString = sharedPreferences.getString("secString", "");
         if (secretString.isEmpty()) {
             Log.e("BINGBONG", "generateSecretString: secretString is empty");
-            secretString = KeyUtils.generateRandomString(10000);
-            sharedPreferences.edit().putString("secretString", secretString).apply();
+            secretString = KeyUtils.generateRandomString(1000);
+            sharedPreferences.edit().putString("secString", secretString).apply();
         }
 
         return secretString;
@@ -111,7 +110,7 @@ public class KeyManager {
         return newPrivateKey;
     }
 
-    private int submitPublicKey() {
+    public int submitPublicKey() {
         String publicKeyBase64 = sharedPreferences.getString("publicKey", "");
         if (publicKeyBase64.isEmpty()) {
             Log.e("BINGBONG", "submitPublicKey: Public key is empty");
@@ -135,14 +134,5 @@ public class KeyManager {
 
     public PrivateKey getPrivateKey() {
         return privateKey;
-    }
-
-    public String decryptMessage(@NotNull String message) throws IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
-        // Decrypt the encrypted bytes using the private key
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        byte[] decryptedBytes = cipher.doFinal(message.getBytes());
-
-        return new String(decryptedBytes);
     }
 }

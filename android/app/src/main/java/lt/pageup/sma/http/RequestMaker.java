@@ -18,6 +18,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -60,7 +62,9 @@ public class RequestMaker {
 
     public static @Nullable JSONObject getMessages(String phoneNumber, String secretString) {
         try {
-            return asyncGetRequest("/messages", "phoneNumber=" + phoneNumber + "&secretString=" + secretString);
+            HashMap<String, String> headers = new HashMap<>();
+            headers.put("secretString", secretString);
+            return asyncGetRequest("/messages", "phoneNumber=" + phoneNumber, headers);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
             return null;
@@ -73,7 +77,7 @@ public class RequestMaker {
      */
     public static String getPublicKey(String phoneNumber) {
         try {
-            return asyncGetRequest("/auth/get_public_key", "phoneNumber=" + phoneNumber).getString("publicKey");
+            return asyncGetRequest("/auth/get_public_key", "phoneNumber=" + phoneNumber, null).getString("publicKey");
         } catch (IOException | JSONException e) {
             e.printStackTrace();
             return null;
@@ -95,9 +99,9 @@ public class RequestMaker {
         return result;
     }
 
-    public static @Nullable JSONObject asyncGetRequest(String location, String query) throws IOException, JSONException {
+    public static @Nullable JSONObject asyncGetRequest(String location, String query, @Nullable HashMap<String, String> headers) throws IOException, JSONException {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Callable<JSONObject> callable = () -> getRequest(location, query);
+        Callable<JSONObject> callable = () -> getRequest(location, query, headers);
         Future<JSONObject> futureResult = executor.submit(callable);
         JSONObject result = null;
         try {
@@ -125,13 +129,19 @@ public class RequestMaker {
         return connection.getResponseCode();
     }
 
-    public static @NotNull JSONObject getRequest(String location, String query) throws IOException, JSONException {
+    public static @NotNull JSONObject getRequest(String location, String query, @Nullable HashMap<String, String> headers) throws IOException, JSONException {
         URL url = new URL(BASE_URL + location + "?" + query);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(5000);
         connection.setRequestProperty("Content-Type", "application/json");
+
+        if (headers != null) {
+            for (String key : headers.keySet()) {
+                connection.setRequestProperty(key, headers.get(key));
+            }
+        }
 
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;
