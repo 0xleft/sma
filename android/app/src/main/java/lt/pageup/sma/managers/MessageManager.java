@@ -55,9 +55,9 @@ public class MessageManager {
             decryptedMessage = "Could not decrypt message";
         }
 
-        // if contact is not in database, add it
-        Contact contact = MainActivity.getInstance().getContactManager().getContact(phoneNumber);
-        if (contact == null) {
+        try {
+            MainActivity.getInstance().getContactManager().getContact(phoneNumber);
+        } catch (Exception e) {
             MainActivity.getInstance().getContactManager().addContact(phoneNumber, phoneNumber, null);
         }
 

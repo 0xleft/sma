@@ -37,6 +37,7 @@ public class MessageChecker {
                             MainActivity.getInstance().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    MainActivity.getInstance().setPhoneNumber(from);
                                     MainActivity.getInstance().changeActivityMessage();
                                 }
                             });
