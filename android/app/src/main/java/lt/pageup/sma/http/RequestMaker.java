@@ -55,7 +55,7 @@ public class RequestMaker {
     }
 
     public static void sendMessage(String phoneNumber, String toPhoneNumber, String secretString, String message, MessageDataSource datasource) {
-        Contact contact = MainActivity.getInstance().getContactManager().getContact(phoneNumber);
+        Contact contact = MainActivity.getInstance().getContactManager().getContact(toPhoneNumber);
 
         if (contact == null) {
             return;
